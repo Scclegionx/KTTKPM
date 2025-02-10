@@ -1,0 +1,16 @@
+{% extends "main.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="main-title">Danh sách Sách</h1>
+    {% for book in books %}
+        <div class="book-card">
+            <h3>{{ book.title }}</h3>
+            <p>Tác giả: {{ book.author }}</p>
+            <p>Giá: {{ book.price }} VNĐ</p>
+        </div>
+    {% empty %}
+        <p>Không có sách nào!</p>
+    {% endfor %}
+</div>
+{% endblock %}
