@@ -1,5 +1,6 @@
 from django.db import models
 from customer.models import Customer
+from bson import ObjectId
 from book.models import Book
 
 class Cart(models.Model):
@@ -13,14 +14,25 @@ class Cart(models.Model):
     def __str__(self):
         return f"Cart {self.id} for {self.customer.username}"
 
+
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    book_id = models.CharField(max_length=24)  # Lưu ObjectId từ MongoDB
     quantity = models.PositiveIntegerField()
     added_at = models.DateTimeField(auto_now_add=True)
 
+    def get_book(self):
+        """Truy vấn MongoDB lấy thông tin Book theo book_id."""
+        try:
+            return Book.objects.get(id=ObjectId(self.book_id))
+        except Book.DoesNotExist:
+            return None
+
     def subtotal(self):
-        return self.quantity * self.book.price
+        """Tính tổng tiền dựa vào thông tin sách trong MongoDB."""
+        book = self.get_book()
+        return self.quantity * float(book.price) if book else 0
 
     def __str__(self):
-        return f"{self.quantity} x {self.book.title}"
+        book = self.get_book()
+        return f"{self.quantity} x {book.title}" if book else "Book not found"

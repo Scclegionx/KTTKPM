@@ -1,14 +1,16 @@
-from django.db import models
+# book/models.py
+from mongoengine import Document, StringField, DecimalField, IntField, DateField, FloatField
 
-class Book(models.Model):
-    title = models.CharField(max_length=255)
-    author = models.CharField(max_length=255)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    stock = models.PositiveIntegerField()
-    description = models.TextField()
-    published_date = models.DateField()
-    genre = models.CharField(max_length=100)
-    rating = models.FloatField(default=0.0)
+class Book(Document):
+    meta = {'collection': 'book'}
+    title = StringField(max_length=255, required=True)
+    author = StringField(max_length=255, required=True)
+    price = DecimalField(precision=2, required=True)
+    stock = IntField(min_value=0, required=True)
+    description = StringField()
+    published_date = DateField(required=True)
+    genre = StringField(max_length=100)
+    rating = FloatField(default=0.0)
 
     def __str__(self):
         return self.title

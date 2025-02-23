@@ -27,6 +27,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# from datetime import timedelta
+
+# SIMPLE_JWT = {
+#     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Thay đổi thời gian hết hạn
+#     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+# }
+
+
 
 # Application definition
 
@@ -40,7 +48,18 @@ INSTALLED_APPS = [
     'customer',
     'book',
     'cart',
+    'rest_framework',
+    'rest_framework_simplejwt',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
 
 AUTH_USER_MODEL = 'customer.Customer'
 
@@ -89,8 +108,26 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    },
+    'cartdb': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'eCommerceDB',
+        'USER': 'ecommerce_user',
+        'PASSWORD': 'ecommerce_password',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
+from mongoengine import connect
+
+connect(
+    db='itemdb',
+    host='mongodb+srv://anhvh243:Kv9RzWTuamVcTlif@cluster0.xgxi5.mongodb.net/itemdb',
+    username='anhvh243',
+    password='Kv9RzWTuamVcTlif',
+    authentication_source='admin'
+)
 
 
 # Password validation

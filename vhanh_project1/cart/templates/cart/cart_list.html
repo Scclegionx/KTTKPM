@@ -1,0 +1,12 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+<h1>Cart List</h1>
+<ul>
+    {% for cart in carts %}
+        <li>Cart {{ cart.id }} for {{ cart.customer.username }} — Total: ${{ cart.total_price }}</li>
+    {% endfor %}
+</ul>
+
+{% endblock content %}

@@ -1,0 +1,37 @@
+services:
+  mysql_db:
+    image: mysql:8.0
+    container_name: mysql_ecommerce
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: eCommerceDB
+      MYSQL_USER: ecommerce_user
+      MYSQL_PASSWORD: ecommerce_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - ecommerce_network
+
+  postgres_db:
+    image: postgres:15
+    container_name: postgres_ecommerce
+    environment:
+      POSTGRES_DB: eCommerceDB
+      POSTGRES_USER: ecommerce_user
+      POSTGRES_PASSWORD: ecommerce_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ecommerce_network
+
+volumes:
+  mysql_data:
+  postgres_data:
+
+networks:
+  ecommerce_network:
+    driver: bridge
