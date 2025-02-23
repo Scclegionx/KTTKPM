@@ -6,7 +6,11 @@
             <li><a href="/api/book/books">Sách</a></li>
             <li><a href="/cart">Giỏ Hàng</a></li>
             <li><a href="/api/customer/profile">Profile</a></li>
-            <li><a href="/login">Đăng Nhập</a></li>
+            {% if request.user.is_authenticated %}
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+            {% else %}
+            <li><a href="{% url 'login' %}">Login</a></li>
+            {% endif %}
         </ul>
     </div>
 </nav>
