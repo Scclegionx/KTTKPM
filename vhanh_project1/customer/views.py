@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import LoginForm, RegisterForm, CustomerProfileForm
 from django.contrib.auth.decorators import login_required
+from base.utils import get_tokens_for_user
 
 def customer_register(request):
     if request.user.is_authenticated:
@@ -15,7 +16,7 @@ def customer_register(request):
             user.set_password(form.cleaned_data["password1"])
             user.save(using='mysql_db')
             login(request, user, backend='customer.backends.CustomerAuthBackend')
-            return redirect("profile")
+            return redirect("customer_profile")
         else:
             messages.error(request, "Registration failed")
     else:
@@ -34,6 +35,12 @@ def customer_login(request):
             user = authenticate(request, username=form.cleaned_data["username"], password=form.cleaned_data["password"])
             if user:
                 login(request, user, backend='customer.backends.CustomerAuthBackend')
+                tokens = get_tokens_for_user(user, 'customer.backends.CustomerAuthBackend')
+
+                # Lưu token vào session
+                request.session['access_token'] = tokens['access']
+                request.session['refresh_token'] = tokens['refresh']
+
                 return redirect("customer_profile")
             else:
                 messages.error(request, "Invalid username or password")
@@ -71,3 +78,31 @@ def edit_profile(request):
     else:
         form = CustomerProfileForm(instance=customer)
     return render(request, 'customer/edit_profile.html', {'form': form})
+
+
+# customer/views.py
+from django.shortcuts import render
+from django.http import HttpResponse
+import requests
+
+def test_book_access(request):
+    if not request.user.is_authenticated:
+        return HttpResponse("Bạn chưa đăng nhập", status=401)
+
+    access_token = request.session.get('access_token')
+
+    headers = {'Authorization': f'Bearer {access_token}'}
+
+    # Test GET
+    get_response = requests.get('http://127.0.0.1:8000/api/books/', headers=headers)
+    print("GET response:", get_response.status_code)
+
+    # Test POST
+    post_response = requests.post(
+        'http://127.0.0.1:8000/api/books/',
+        json={'title': 'Test Book', 'author': 'Test Author', 'price': 100},
+        headers=headers
+    )
+    print("POST response:", post_response.status_code)
+
+    return HttpResponse("Đã test xong, check console")

@@ -121,6 +121,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import Clothes
 from .serializers import ClothesSerializer
 from rest_framework.pagination import PageNumberPagination
+from base.permissions import IsSellerOrReadOnly
 
 class ClothesPagination(PageNumberPagination):
     page_size = 10
@@ -131,8 +132,12 @@ class ClothesViewSet(viewsets.ModelViewSet):
     queryset = Clothes.objects.all()
     serializer_class = ClothesSerializer
     pagination_class = ClothesPagination
+    permission_classes = [IsSellerOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ['stock', 'size', 'color']
     ordering_fields = ['name', 'price', 'stock', 'size', 'color']
     ordering = ['name']
+
+    def get_queryset(self):
+        return Clothes.objects.filter(seller_id=self.request.user.id)
 

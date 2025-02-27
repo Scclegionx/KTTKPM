@@ -7,6 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import Seller
 from .serializers import SellerRegisterSerializer
+from base.utils import get_tokens_for_user 
 
 class SellerAuthViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
@@ -21,8 +22,10 @@ class SellerAuthViewSet(viewsets.ViewSet):
     def login(self, request):
         user = authenticate(request, username=request.data.get('username'), password=request.data.get('password'))
         if user:
-            refresh = RefreshToken.for_user(user)
-            return Response({'refresh': str(refresh), 'access': str(refresh.access_token)})
+            tokens = get_tokens_for_user(user, 'seller.backends.SellerAuthBackend')
+            return Response(tokens)
+            # refresh = RefreshToken.for_user(user)
+            # return Response({'refresh': str(refresh), 'access': str(refresh.access_token)})
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
     @action(detail=False, methods=['post'])

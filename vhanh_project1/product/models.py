@@ -16,6 +16,8 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    seller_id = models.IntegerField(null=True, blank=True)
+
     class Meta:
         app_label = 'product'
 

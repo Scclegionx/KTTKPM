@@ -72,8 +72,11 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
+    # 'DEFAULT_AUTHENTICATION_CLASSES': (
+    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
+    # ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'base.authentication.CustomJWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -83,7 +86,6 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'base.BaseUser'
-# AUTH_USER_MODEL = 'customer.Customer'
 
 
 # Multi-authentication backends
