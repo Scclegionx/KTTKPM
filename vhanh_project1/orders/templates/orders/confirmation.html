@@ -1,0 +1,56 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+<div class="confirmation-container">
+    <h2>Order Confirmation</h2>
+
+    <div class="order-summary">
+        <p><strong>Subtotal:</strong> ${{ subtotal }}</p>
+        <p><strong>Discount:</strong> ${{ discount|floatformat:2 }}</p>
+        <p class="total"><strong>Total:</strong> ${{ total|floatformat:2 }}</p>
+    </div>
+
+    <h3>Ordered Items:</h3>
+    <ul class="item-list">
+        {% for item in items %}
+        <li class="item">
+            {{ item.product_name }} - ${{ item.price }} x {{ item.quantity }}
+        </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Apply Coupon</h3>
+    <form method="post" action="{% url 'order_preview' %}" class="coupon-form">
+        {% csrf_token %}
+        <select name="coupon" class="coupon-select">
+            <option value="">-- Select Coupon --</option>
+            {% for coupon in available_coupons %}
+            <option value="{{ coupon.code }}">{{ coupon.code }} ({{ coupon.discount_value }}{% if coupon.discount_type == 'percent' %}%{% else %}$ {% endif %})</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="apply-btn">Apply</button>
+    </form>
+
+    <h3>Shipping Information</h3>
+    <form method="post" action="{% url 'confirm_order' %}" class="payment-form">
+        {% csrf_token %}
+        <label for="shipping_address">Shipping Address:</label>
+        <input type="text" name="shipping_address" placeholder="Enter your address" required>
+
+        {% comment %} <label for="status">Order Status:</label>
+        <select name="status" required>
+            <option value="packing">Packing</option>
+            <option value="shipping">Shipping</option>
+            <option value="delivered">Delivered</option>
+        </select> {% endcomment %}
+
+        <input type="hidden" name="discount" value="{{ discount }}">
+        <input type="hidden" name="total" value="{{ total }}">
+        <button type="submit" class="payment-btn">Save</button>
+    </form>
+
+    <a href="{% url 'shop' %}" class="back-to-shop">Continue Shopping</a>
+</div>
+
+{% endblock content %}

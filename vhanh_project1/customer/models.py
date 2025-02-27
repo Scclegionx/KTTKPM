@@ -2,22 +2,23 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class Customer(AbstractUser):
-    email = models.EmailField(unique=True)  
+    CUSTOMER_TYPES = [
+        ('low', 'Low'),
+        ('mid', 'Mid'),
+        ('high', 'High'),
+        ('vip', 'VIP')
+    ]
+
+    email = models.EmailField(unique=True)
     bio = models.TextField(null=True, blank=True)
+    customer_type = models.CharField(max_length=10, choices=CUSTOMER_TYPES, default='low')
 
-    USERNAME_FIELD = "username"  
-    REQUIRED_FIELDS = ["email"]  
-    
+    groups = None
+    user_permissions = None
 
-    groups = models.ManyToManyField(
-        "auth.Group",
-        related_name="customer_groups",  
-        blank=True,
-        help_text="The groups this user belongs to.",
-    )
-    user_permissions = models.ManyToManyField(
-        "auth.Permission",
-        related_name="customer_permissions",  
-        blank=True,
-        help_text="Specific permissions for this user.",
-    )
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = ["email"]
+
+    class Meta:
+        app_label = 'customer'
+        db_table = 'customer'

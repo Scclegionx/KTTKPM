@@ -1,0 +1,56 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+<h2>Shop</h2>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+    <a href="?type=all" class="{% if product_type == 'all' %}active{% endif %}">All</a>
+    <a href="?type=book" class="{% if product_type == 'book' %}active{% endif %}">Books</a>
+    <a href="?type=clothes" class="{% if product_type == 'clothes' %}active{% endif %}">Clothes</a>
+    <a href="?type=shoes" class="{% if product_type == 'shoes' %}active{% endif %}">Shoes</a>
+    <a href="?type=electronics" class="{% if product_type == 'electronics' %}active{% endif %}">Electronics</a>
+</div>
+
+<!-- Product List -->
+<!-- Product List -->
+<div class="product-grid">
+    {% for product in page_obj %}
+    <div class="product-card">
+        <a href="{% if product.category == 'book' %}
+            {% url 'book_detail' product.id_str %}
+         {% elif product.category == 'clothes' %}
+            {% url 'clothes_detail' product.id_str %}
+         {% elif product.category == 'shoes' %}
+            {% url 'shoes_detail' product.id_str %}
+         {% elif product.category == 'electronics' %}
+            {% url 'electronics_detail' product.id_str %}
+         {% endif %}">
+            <img src="{% static 'images/shop_thumbnail.jpg' %}" alt="Thumbnail" class="product-thumbnail">
+            <strong>{{ product.name }}</strong>
+        </a>
+        <p class="price">${{ product.price }}</p>
+        <p class="description">{{ product.description }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+
+<!-- Pagination -->
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}&type={{ product_type }}">&laquo; Previous</a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+        <a href="?page={{ num }}&type={{ product_type }}" class="{% if num == page_obj.number %}active{% endif %}">
+            {{ num }}
+        </a>
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&type={{ product_type }}">Next &raquo;</a>
+    {% endif %}
+</div>
+{% endblock content %}

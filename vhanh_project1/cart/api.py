@@ -1,42 +1,19 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import viewsets
 from cart.models import Cart, CartItem
 from cart.serializers import CartSerializer, CartItemSerializer
 
-@api_view(['GET', 'POST'])
-def cart_list(request):
-    if request.method == 'GET':
-        carts = Cart.objects.all()
-        serializer = CartSerializer(carts, many=True)
-        return Response(serializer.data)
 
-    elif request.method == 'POST':
-        serializer = CartSerializer(data=request.data)
-        if serializer.is_valid():
-            cart = serializer.save()
-            return Response(CartSerializer(cart).data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class CartViewSet(viewsets.ModelViewSet):
+    queryset = Cart.objects.using('cartdb').all()
+    serializer_class = CartSerializer
+
+    def get_queryset(self):
+        customer_id = self.request.query_params.get('customer_id')
+        if customer_id:
+            return Cart.objects.using('cartdb').filter(customer_id=customer_id)
+        return Cart.objects.using('cartdb').all()
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def cart_detail(request, cart_id):
-    try:
-        cart = Cart.objects.get(id=cart_id)
-    except Cart.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'GET':
-        serializer = CartSerializer(cart)
-        return Response(serializer.data)
-
-    elif request.method == 'PUT':
-        serializer = CartSerializer(cart, data=request.data)
-        if serializer.is_valid():
-            cart = serializer.save()
-            return Response(CartSerializer(cart).data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    elif request.method == 'DELETE':
-        cart.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+class CartItemViewSet(viewsets.ModelViewSet):
+    queryset = CartItem.objects.using('cartdb').all()
+    serializer_class = CartItemSerializer

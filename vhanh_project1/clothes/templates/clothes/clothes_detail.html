@@ -1,0 +1,20 @@
+{% extends "main.html" %}
+
+{% load static %}
+
+{% block content %}
+<div class="product-detail">
+    <img src="{% static 'images/shop_thumbnail.jpg' %}" alt="{{ clothes.name }}" class="product-image">
+    <div class="product-info">
+        <h2>{{ clothes.name }}</h2>
+        <p class="price">${{ clothes.price }}</p>
+        <p class="description">{{ clothes.description }}</p>
+        <p class="size">Size: {{ clothes.size }}</p>
+        <p class="color">Color: {{ clothes.color }}</p>
+        <form action="{% url 'add_to_cart' clothes.id_str clothes.name clothes.price %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="add-to-cart">Add to Cart</button>
+        </form>
+    </div>
+</div>
+{% endblock content %}

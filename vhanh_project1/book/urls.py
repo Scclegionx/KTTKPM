@@ -1,11 +1,7 @@
-from django.urls import path
-from book import api, views
+from rest_framework.routers import DefaultRouter
+from .views import BookViewSet
 
-urlpatterns = [
-    # API endpoints
-    path('api/books/', api.book_list),
-    path('api/books/<book_id>/', api.book_detail),
+router = DefaultRouter()
+router.register(r'books', BookViewSet, basename='book')
 
-    # MVT views
-    path('books/', views.book_list_view),
-]
+urlpatterns = router.urls

@@ -1,16 +1,21 @@
 # book/models.py
-from mongoengine import Document, StringField, DecimalField, IntField, DateField, FloatField
+from djongo import models
+from product.models import Product
 
-class Book(Document):
-    meta = {'collection': 'book'}
-    title = StringField(max_length=255, required=True)
-    author = StringField(max_length=255, required=True)
-    price = DecimalField(precision=2, required=True)
-    stock = IntField(min_value=0, required=True)
-    description = StringField()
-    published_date = DateField(required=True)
-    genre = StringField(max_length=100)
-    rating = FloatField(default=0.0)
+class Book(Product):
+    product_ptr = models.OneToOneField(
+        Product,
+        on_delete=models.CASCADE,
+        parent_link=True,
+        primary_key=True
+    )
+    author = models.CharField(max_length=255)
+    published_date = models.DateField()
+    genre = models.CharField(max_length=100)
+    rating = models.FloatField(default=0.0)
+
+    class Meta:
+        app_label = 'product'
 
     def __str__(self):
-        return self.title
+        return f"{self.name} by {self.author}"

@@ -1,23 +1,13 @@
 {% extends "main.html" %}
 
+{% load static %}
+
 {% block content %}
 <div class="profile-container">
-    <div class="profile-card">
-        <div class="profile-header">
-            <img src="https://via.placeholder.com/150" alt="Avatar" class="avatar">
-            <h2>Nguyễn Văn A</h2>
-            <p class="role">Khách hàng VIP</p>
-        </div>
-        <div class="profile-info">
-            <h3>Thông tin cá nhân</h3>
-            <p><strong>Email:</strong> nguyenvana@example.com</p>
-            <p><strong>Số điện thoại:</strong> 0123-456-789</p>
-            <p><strong>Địa chỉ:</strong> 123 Đường ABC, Quận 1, TP.HCM</p>
-        </div>
-        <div class="profile-actions">
-            <button class="btn edit-btn">Chỉnh sửa</button>
-            <button class="btn logout-btn">Đăng xuất</button>
-        </div>
-    </div>
+    <h2>{{ customer.username }}'s Profile</h2>
+    <p><strong>Email:</strong> {{ customer.email }}</p>
+    <p><strong>Bio:</strong> {{ customer.bio }}</p>
+    <p><strong>Customer Type:</strong> {{ customer.get_customer_type_display }}</p>
+    <a href="{% url 'edit_profile' %}" class="edit-btn">Edit Profile</a>
 </div>
 {% endblock %}

@@ -1,0 +1,22 @@
+{% extends "main.html" %}
+
+{% load static %}
+
+{% block content %}
+<div class="product-detail">
+    <img src="{% static 'images/shop_thumbnail.jpg' %}" alt="{{ electronics.name }}" class="product-image">
+    <div class="product-info">
+        <h2>{{ electronics.name }}</h2>
+        <p class="price">${{ electronics.price }}</p>
+        <p class="description">{{ electronics.description }}</p>
+        <p class="brand">Brand: {{ electronics.brand }}</p>
+        <p class"warranty_period">Warranty Period: {{ electronics.warranty_period }} Months</p>
+        <form action="{% url 'add_to_cart' electronics.id_str electronics.name electronics.price %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="add-to-cart">Add to Cart</button>
+        </form>
+        
+        
+    </div>
+</div>
+{% endblock content %}

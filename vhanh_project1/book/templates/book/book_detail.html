@@ -1,0 +1,24 @@
+{% extends "main.html" %}
+
+{% load static %}
+
+{% block content %}
+<div class="product-detail">
+    <img src="{% static 'images/shop_thumbnail.jpg' %}" alt="{{ book.title }}" class="product-image">
+    <div class="product-info">
+        <h2>{{ book.name }}</h2>
+        <p class="author">By {{ book.author }}</p>
+        <p class="price">${{ book.price }}</p>
+        <p class="description">{{ book.description }}</p>
+        <p class="genre">Genre: {{ book.genre }}</p>
+        <p class="rating">Rating: {{ book.rating }}</p>
+        <p class="published-date">Published: {{ book.published_date }}</p>
+        <form action="{% url 'add_to_cart' book.id_str book.name book.price %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="add-to-cart">Add to Cart</button>
+        </form>
+        
+        
+    </div>
+</div>
+{% endblock content %}

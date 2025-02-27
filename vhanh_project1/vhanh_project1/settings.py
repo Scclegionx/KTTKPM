@@ -27,13 +27,21 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# from datetime import timedelta
+from datetime import timedelta
 
-# SIMPLE_JWT = {
-#     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Thay đổi thời gian hết hạn
-#     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Thay đổi thời gian hết hạn
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+}
+
+# ZALOPAY = {
+#     'APP_ID': '2554',
+#     'KEY1': 'sdngKKJmqEMzvh5QQcdD2A9XBSKUNaYn',
+#     'KEY2': 'trMrHtvjo6myautxDUiAcYsVtaeQ8nhf',
+#     'CREATE_ORDER_URL': 'https://sandbox.zalopay.vn/v2/create',
+#     'RETURN_URL': 'http://127.0.0.1:8000/payment/success/',
+#     'CALLBACK_URL': 'http://127.0.0.1:8000/payment/callback/',
 # }
-
 
 
 # Application definition
@@ -50,6 +58,17 @@ INSTALLED_APPS = [
     'cart',
     'rest_framework',
     'rest_framework_simplejwt',
+    'seller',
+    'base',
+    'clothes',
+    'corsheaders',
+    'django_filters',
+    'product',
+    'shoes',
+    'electronics',
+    'orders',
+    'coupons',
+    # 'payment',
 ]
 
 REST_FRAMEWORK = {
@@ -58,14 +77,25 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-    )
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 }
 
-AUTH_USER_MODEL = 'customer.Customer'
+AUTH_USER_MODEL = 'base.BaseUser'
+# AUTH_USER_MODEL = 'customer.Customer'
 
+
+# Multi-authentication backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',            # BaseUser (Admin/Staff) - SQLite
+    'customer.backends.CustomerAuthBackend',                # Customer - MySQL
+    'seller.backends.SellerAuthBackend',                # Seller - MySQL
+]
 
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -75,8 +105,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost" ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # FE Vite/React
+    "http://127.0.0.1:5173",
+]
+
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'vhanh_project1.urls'
 
@@ -116,18 +152,40 @@ DATABASES = {
         'PASSWORD': 'ecommerce_password',
         'HOST': 'localhost',
         'PORT': '5432',
+    },
+    # MySQL cho Customer
+    'mysql_db': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'eCommerceDB',
+        'USER': 'ecommerce_user',
+        'PASSWORD': 'ecommerce_password',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    },
+    'ecommercedb': {
+        'ENGINE': 'djongo',
+        'NAME': 'ecommercedb',
+        'CLIENT': {
+            'host': 'mongodb+srv://tranducscc:j6jYAlDSsfZT398i@iot.7srk5.mongodb.net/ecommercedb',
+            'username': 'tranducscc',
+            'password': 'j6jYAlDSsfZT398i',
+            'authSource': 'admin',
+        }
     }
 }
 
-from mongoengine import connect
+DATABASE_ROUTERS = ['vhanh_project1.db_router.ECommerceDBRouter']
 
-connect(
-    db='itemdb',
-    host='mongodb+srv://anhvh243:Kv9RzWTuamVcTlif@cluster0.xgxi5.mongodb.net/itemdb',
-    username='anhvh243',
-    password='Kv9RzWTuamVcTlif',
-    authentication_source='admin'
-)
+
+# from mongoengine import connect
+
+# connect(
+#     db='itemdb',
+#     host='mongodb+srv://anhvh243:Kv9RzWTuamVcTlif@cluster0.xgxi5.mongodb.net/itemdb',
+#     username='anhvh243',
+#     password='Kv9RzWTuamVcTlif',
+#     authentication_source='admin'
+# )
 
 
 # Password validation

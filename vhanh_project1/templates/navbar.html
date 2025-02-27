@@ -1,12 +1,13 @@
 <nav class="navbar">
     <div class="nav-container">
-        <a href="/" class="logo">📚 BookStore</a>
+        <a href="/home" class="logo">📚 E-Commerce</a>
         <ul class="nav-links">
-            <li><a href="/">Trang Chủ</a></li>
-            <li><a href="/api/book/books">Sách</a></li>
-            <li><a href="/cart">Giỏ Hàng</a></li>
-            <li><a href="/api/customer/profile">Profile</a></li>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/shop">Shop</a></li>
             {% if request.user.is_authenticated %}
+            <li><a href="{% url 'cart' %}">Cart</a></li>
+            <li><a href="{% url 'customer_profile' %}">Profile</a></li>
+            <li><a href="{% url 'order_list' %}">My Orders</a></li>
             <li><a href="{% url 'logout' %}">Logout</a></li>
             {% else %}
             <li><a href="{% url 'login' %}">Login</a></li>
